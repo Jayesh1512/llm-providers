@@ -1,0 +1,15 @@
+node_modules/
+dist/
+out/
+cache/
+broadcast/
+.env
+.env.*
+!.env.example
+.provider-state/
+deployments/*.local.json
+.impeccable/mocks/
+privacy-artifacts/
+.privacy-secrets/
+.account-state/
+attestation/prover/target/

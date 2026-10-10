@@ -1,0 +1,406 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-10T07:13:30.226665+00:00",
+  "title": "Design System: LLM Providers",
+  "extensions": {
+    "colorMeta": {
+      "page": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0067 97.35)",
+          "oklch(26% 0.0067 97.35)",
+          "oklch(38% 0.0067 97.35)",
+          "oklch(49% 0.0067 97.35)",
+          "oklch(61% 0.0067 97.35)",
+          "oklch(72% 0.0067 97.35)",
+          "oklch(84% 0.0067 97.35)",
+          "oklch(95% 0.0067 97.35)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "White Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "secondary-surface": {
+        "role": "neutral",
+        "displayName": "Ledger Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0081 98.88)",
+          "oklch(26% 0.0081 98.88)",
+          "oklch(38% 0.0081 98.88)",
+          "oklch(49% 0.0081 98.88)",
+          "oklch(61% 0.0081 98.88)",
+          "oklch(72% 0.0081 98.88)",
+          "oklch(84% 0.0081 98.88)",
+          "oklch(95% 0.0081 98.88)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Green Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0168 155.93)",
+          "oklch(26% 0.0168 155.93)",
+          "oklch(38% 0.0168 155.93)",
+          "oklch(49% 0.0168 155.93)",
+          "oklch(61% 0.0168 155.93)",
+          "oklch(72% 0.0168 155.93)",
+          "oklch(84% 0.0168 155.93)",
+          "oklch(95% 0.0168 155.93)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0166 155.21)",
+          "oklch(26% 0.0166 155.21)",
+          "oklch(38% 0.0166 155.21)",
+          "oklch(49% 0.0166 155.21)",
+          "oklch(61% 0.0166 155.21)",
+          "oklch(72% 0.0166 155.21)",
+          "oklch(84% 0.0166 155.21)",
+          "oklch(95% 0.0166 155.21)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Registration Line",
+        "tonalRamp": [
+          "oklch(15% 0.0121 133.39)",
+          "oklch(26% 0.0121 133.39)",
+          "oklch(38% 0.0121 133.39)",
+          "oklch(49% 0.0121 133.39)",
+          "oklch(61% 0.0121 133.39)",
+          "oklch(72% 0.0121 133.39)",
+          "oklch(84% 0.0121 133.39)",
+          "oklch(95% 0.0121 133.39)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Forest Green",
+        "tonalRamp": [
+          "oklch(15% 0.0848 158.61)",
+          "oklch(26% 0.0848 158.61)",
+          "oklch(38% 0.0848 158.61)",
+          "oklch(49% 0.0848 158.61)",
+          "oklch(61% 0.0848 158.61)",
+          "oklch(72% 0.0848 158.61)",
+          "oklch(84% 0.0848 158.61)",
+          "oklch(95% 0.0848 158.61)"
+        ]
+      },
+      "accent-hover": {
+        "role": "primary",
+        "displayName": "Deep Forest",
+        "tonalRamp": [
+          "oklch(15% 0.0735 158.06)",
+          "oklch(26% 0.0735 158.06)",
+          "oklch(38% 0.0735 158.06)",
+          "oklch(49% 0.0735 158.06)",
+          "oklch(61% 0.0735 158.06)",
+          "oklch(72% 0.0735 158.06)",
+          "oklch(84% 0.0735 158.06)",
+          "oklch(95% 0.0735 158.06)"
+        ]
+      },
+      "selected": {
+        "role": "primary",
+        "displayName": "Selected Wash",
+        "tonalRamp": [
+          "oklch(15% 0.0129 141.81)",
+          "oklch(26% 0.0129 141.81)",
+          "oklch(38% 0.0129 141.81)",
+          "oklch(49% 0.0129 141.81)",
+          "oklch(61% 0.0129 141.81)",
+          "oklch(72% 0.0129 141.81)",
+          "oklch(84% 0.0129 141.81)",
+          "oklch(95% 0.0129 141.81)"
+        ]
+      },
+      "secondary-hover": {
+        "role": "neutral",
+        "displayName": "Hover Wash",
+        "tonalRamp": [
+          "oklch(15% 0.0131 130.78)",
+          "oklch(26% 0.0131 130.78)",
+          "oklch(38% 0.0131 130.78)",
+          "oklch(49% 0.0131 130.78)",
+          "oklch(61% 0.0131 130.78)",
+          "oklch(72% 0.0131 130.78)",
+          "oklch(84% 0.0131 130.78)",
+          "oklch(95% 0.0131 130.78)"
+        ]
+      },
+      "focus": {
+        "role": "primary",
+        "displayName": "Focus Green",
+        "tonalRamp": [
+          "oklch(15% 0.0808 153.65)",
+          "oklch(26% 0.0808 153.65)",
+          "oklch(38% 0.0808 153.65)",
+          "oklch(49% 0.0808 153.65)",
+          "oklch(61% 0.0808 153.65)",
+          "oklch(72% 0.0808 153.65)",
+          "oklch(84% 0.0808 153.65)",
+          "oklch(95% 0.0808 153.65)"
+        ]
+      },
+      "error": {
+        "role": "semantic",
+        "displayName": "Error Ink",
+        "tonalRamp": [
+          "oklch(15% 0.1429 25.90)",
+          "oklch(26% 0.1429 25.90)",
+          "oklch(38% 0.1429 25.90)",
+          "oklch(49% 0.1429 25.90)",
+          "oklch(61% 0.1429 25.90)",
+          "oklch(72% 0.1429 25.90)",
+          "oklch(84% 0.1429 25.90)",
+          "oklch(95% 0.1429 25.90)"
+        ]
+      },
+      "error-surface": {
+        "role": "semantic",
+        "displayName": "Error Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0168 31.08)",
+          "oklch(26% 0.0168 31.08)",
+          "oklch(38% 0.0168 31.08)",
+          "oklch(49% 0.0168 31.08)",
+          "oklch(61% 0.0168 31.08)",
+          "oklch(72% 0.0168 31.08)",
+          "oklch(84% 0.0168 31.08)",
+          "oklch(95% 0.0168 31.08)"
+        ]
+      },
+      "warning": {
+        "role": "semantic",
+        "displayName": "Warning Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0911 81.42)",
+          "oklch(26% 0.0911 81.42)",
+          "oklch(38% 0.0911 81.42)",
+          "oklch(49% 0.0911 81.42)",
+          "oklch(61% 0.0911 81.42)",
+          "oklch(72% 0.0911 81.42)",
+          "oklch(84% 0.0911 81.42)",
+          "oklch(95% 0.0911 81.42)"
+        ]
+      },
+      "warning-surface": {
+        "role": "semantic",
+        "displayName": "Warning Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0249 89.21)",
+          "oklch(26% 0.0249 89.21)",
+          "oklch(38% 0.0249 89.21)",
+          "oklch(49% 0.0249 89.21)",
+          "oklch(61% 0.0249 89.21)",
+          "oklch(72% 0.0249 89.21)",
+          "oklch(84% 0.0249 89.21)",
+          "oklch(95% 0.0249 89.21)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Page Heading",
+        "purpose": "Operational page heading; 28px at <=1150px and 27px at <=650px."
+      },
+      "headline": {
+        "displayName": "Section Heading",
+        "purpose": "Primary form and setup section heading."
+      },
+      "title": {
+        "displayName": "Context Title",
+        "purpose": "Empty-state titles; ledger titles use 600 weight."
+      },
+      "body": {
+        "displayName": "Interface Base",
+        "purpose": "DM Sans base inherited by the operating interface."
+      },
+      "compact": {
+        "displayName": "Task Explanation",
+        "purpose": "Compact explanations with open line spacing."
+      },
+      "label": {
+        "displayName": "Field Label",
+        "purpose": "Sentence-case explicit input labels."
+      },
+      "button": {
+        "displayName": "Action Label",
+        "purpose": "Primary, secondary, and inline button text."
+      },
+      "data": {
+        "displayName": "Machine Identifier",
+        "purpose": "Addresses, exact model identifiers, and code; model buttons use 600 weight."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "button-state",
+        "value": "background .15s, border-color .15s",
+        "purpose": "Button hover transitions; removed for reduced motion."
+      },
+      {
+        "name": "pending",
+        "value": "1s ease-in-out infinite alternate; opacity: .3",
+        "purpose": "Pending markers and loading skeletons; removed for reduced motion."
+      },
+      {
+        "name": "refresh",
+        "value": "1.5s linear infinite; transform: rotate(360deg)",
+        "purpose": "In-flight refresh icon; removed for reduced motion."
+      }
+    ],
+    "focus": [
+      {
+        "name": "keyboard-focus",
+        "value": "3px solid #70a781; outline-offset: 3px",
+        "purpose": "Shared visible keyboard focus; integrated search uses offset 0."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "roomy-desktop",
+        "value": "1400px",
+        "query": "min-width"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1150px",
+        "query": "max-width"
+      },
+      {
+        "name": "stacked-ledger",
+        "value": "1050px",
+        "query": "max-width"
+      },
+      {
+        "name": "mobile",
+        "value": "650px",
+        "query": "max-width"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The next explicit operational action.",
+      "html": "<button class=\"ds-primary\">Connect wallet</button>",
+      "css": ".ds-primary{font-family:'DM Sans',system-ui,sans-serif;min-height:40px;border:1px solid var(--accent);border-radius:var(--radius);padding:9px 14px;background:var(--accent);color:white;font-size:13px;font-weight:600;line-height:1.5;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:background .15s,border-color .15s;}.ds-primary:hover:not(:disabled){background:#194f34;border-color:#194f34}.ds-primary:focus-visible{outline:3px solid #70a781;outline-offset:3px}.ds-primary:disabled{cursor:not-allowed;opacity:.47}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A supporting setup, refresh, or recovery action.",
+      "html": "<button class=\"ds-secondary\">Verify &amp; use addresses</button>",
+      "css": ".ds-secondary{font-family:'DM Sans',system-ui,sans-serif;min-height:40px;border:1px solid var(--accent);border-radius:var(--radius);padding:9px 14px;background:var(--accent);color:white;font-size:13px;font-weight:600;line-height:1.5;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:background .15s,border-color .15s;background:transparent;border-color:#bec8bb;color:var(--ink)}.ds-secondary:hover:not(:disabled){background:#e9eee5;border-color:#9caf96}.ds-secondary:focus-visible{outline:3px solid #70a781;outline-offset:3px}.ds-secondary:disabled{cursor:not-allowed;opacity:.47}@media(prefers-reduced-motion:reduce){.ds-secondary{transition:none}}"
+    },
+    {
+      "name": "Text Action",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "A compact inline listing action.",
+      "html": "<button class=\"ds-text-action\">Pause</button>",
+      "css": ".ds-text-action{font-family:'DM Sans',system-ui,sans-serif;padding:4px 0;background:none;border:0;font-size:13px;line-height:1.5;color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.ds-text-action:focus-visible{outline:3px solid #70a781;outline-offset:3px}.ds-text-action:disabled{cursor:not-allowed;opacity:.47}"
+    },
+    {
+      "name": "Labeled Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Explicit label, white field, and immediate hint.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-label\">Peer endpoint</span><input class=\"ds-input\" type=\"url\" placeholder=\"https://your-peer.example.com\"><small class=\"ds-hint\">Public HTTPS endpoint; localhost HTTP is allowed for development.</small></label>",
+      "css": ".ds-field{font-family:'DM Sans',system-ui,sans-serif;display:flex;flex-direction:column;gap:7px;margin-bottom:18px;min-width:0}.ds-label{font-size:12px;line-height:1.5;font-weight:600;color:var(--ink)}.ds-input{font-family:'DM Sans',system-ui,sans-serif;width:100%;min-height:42px;border:1px solid #c9d2c4;background:#fff;border-radius:var(--radius);padding:10px 11px;color:var(--ink);font-size:13px;line-height:1.5;caret-color:var(--accent)}.ds-input::placeholder{color:#70796f}.ds-input:focus-visible{outline:3px solid #70a781;outline-offset:3px}.ds-hint{font-size:11px;color:var(--muted);line-height:1.6}"
+    },
+    {
+      "name": "Operating Navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Horizontal tabs with a persistent active underline.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Marketplace sections\"><button class=\"ds-tab ds-active\" aria-current=\"page\">Consume</button><button class=\"ds-tab\">Provide</button><button class=\"ds-tab\">Network</button></nav>",
+      "css": ".ds-nav{font-family:'DM Sans',system-ui,sans-serif;display:flex;gap:28px;align-items:center;border-bottom:1px solid var(--line);padding:0 20px}.ds-tab{font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5;border:0;border-bottom:2px solid transparent;background:none;color:var(--muted);font-weight:550;padding:16px 0 15px;cursor:pointer}.ds-tab:hover{color:var(--ink)}.ds-tab.ds-active{color:var(--accent);border-bottom-color:var(--accent)}.ds-tab:focus-visible{outline:3px solid #70a781;outline-offset:3px}@media(max-width:650px){.ds-nav{gap:26px}.ds-tab{font-size:13px;padding:12px 0}}"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "A quiet factual registration or network label.",
+      "html": "<span class=\"ds-badge\">Chain 10143 only</span>",
+      "css": ".ds-badge{font-family:'DM Sans',system-ui,sans-serif;display:inline-block;border:1px solid #cbd6c5;color:var(--accent);background:#edf2e7;border-radius:5px;padding:4px 8px;font-size:11px;line-height:1.5;font-weight:600;white-space:nowrap}"
+    },
+    {
+      "name": "Supplier Comparison",
+      "kind": "card",
+      "refersTo": "market",
+      "description": "A white, hairline-registered comparison surface; preview contains headers only.",
+      "html": "<section class=\"ds-market\"><div class=\"ds-toolbar\"><svg class=\"ds-search-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"></circle><path d=\"m21 21-4.3-4.3\"></path></svg><input class=\"ds-search\" aria-label=\"Search model identifiers\" placeholder=\"Search exact model identifiers\"></div><div class=\"ds-scroll\"><table class=\"ds-table\"><thead><tr><th class=\"ds-th\">Model / API</th><th class=\"ds-th\">Provider</th><th class=\"ds-th ds-numeric\">Input / 1M</th><th class=\"ds-th ds-numeric\">Output / 1M</th></tr></thead></table></div></section>",
+      "css": ".ds-market{font-family:'DM Sans',system-ui,sans-serif;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0;color:var(--ink)}.ds-toolbar{display:flex;align-items:center;gap:10px;padding:18px 20px}.ds-search-icon{color:var(--muted);flex-shrink:0}.ds-search{font-family:'DM Sans',system-ui,sans-serif;width:100%;border:0;background:transparent;min-height:30px;font-size:13px;color:var(--ink);caret-color:var(--accent)}.ds-search::placeholder{color:#69736b}.ds-search:focus-visible{outline:3px solid #70a781;outline-offset:0}.ds-scroll{overflow-x:auto;max-width:100%}.ds-table{width:100%;border-collapse:collapse;font-size:13px;text-align:left}.ds-th{font-weight:500;font-size:11px;color:var(--muted);padding:14px 20px 10px;white-space:nowrap;border-top:1px solid var(--line)}.ds-numeric{text-align:right;font-variant-numeric:tabular-nums}@media(max-width:650px){.ds-table{min-width:560px}.ds-toolbar{padding:15px}}"
+    },
+    {
+      "name": "Request Ledger",
+      "kind": "custom",
+      "refersTo": "request-ledger",
+      "description": "The bounded task context adjoining the selected supplier.",
+      "html": "<aside class=\"ds-ledger\"><h2 class=\"ds-ledger-title\">Request ledger</h2><div class=\"ds-selection\"><svg class=\"ds-arrow\" width=\"23\" height=\"23\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"></path></svg><h3 class=\"ds-selection-title\">Select a supplier</h3><p class=\"ds-selection-copy\">Choose a model offer to inspect its peer and start a bounded request.</p></div></aside>",
+      "css": ".ds-ledger{font-family:'DM Sans',system-ui,sans-serif;min-width:0;background:#eeede7;border-radius:10px;padding:23px 24px;color:var(--ink)}.ds-ledger-title{font-size:17px;font-weight:600;letter-spacing:-.025em;line-height:1.35;margin:0 0 22px}.ds-selection{padding:28px 0 36px}.ds-arrow{color:#6d7f69;margin-bottom:16px}.ds-selection-title{font-size:17px;font-weight:550;line-height:1.5;margin:0 0 8px}.ds-selection-copy{font-size:13px;max-width:30ch;line-height:1.7;color:var(--muted);margin:0}@media(max-width:1050px){.ds-selection{padding:15px 0}.ds-selection-copy{max-width:60ch}}@media(max-width:650px){.ds-ledger{padding:23px 20px}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Exchange Ledger",
+    "overview": "LLM Providers is a calm operating interface: exact identities, separate supplier prices, and visible transaction states establish its character. Warm paper surrounds white comparison surfaces and a quieter request ledger. Compact type, structural hairlines, and restrained green controls keep consequential actions easy to locate.\n\nThe system treats real chain and local configuration state as the material of the interface. Empty states explain the missing state and offer a next action; status and recovery messages stay beside the relevant task. Product language remains concrete about testnet operation.",
+    "keyCharacteristics": [
+      "Warm neutral surfaces with a restrained forest-green action color.",
+      "A compact sans interface paired with monospace machine identifiers.",
+      "Structural separators, aligned numeric columns, and bounded task panels.",
+      "Explicit pending, error, recovery, and confirmed states."
+    ],
+    "rules": [
+      {
+        "name": "The Operational Accent Rule",
+        "body": "Green identifies an action, selection, or confirmed state. Keep neutral surfaces dominant.",
+        "section": "colors"
+      },
+      {
+        "name": "The Exact Identifier Rule",
+        "body": "Use monospace for inspectable machine identifiers; align prices to the right with tabular numerals and explicit units.",
+        "section": "typography"
+      },
+      {
+        "name": "The Structural Depth Rule",
+        "body": "Use tonal surfaces and hairline registration to separate tasks; keep panels flat at rest and on hover.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do preserve separate input and output price columns, right-aligned tabular numerals, and explicit test MON units.",
+      "Do make exact model identifiers and peer identities inspectable with the data type role.",
+      "Do keep focus visible, fields explicitly labeled, and errors recoverable beside the affected task.",
+      "Do use neutral surfaces, hairline separators, and green for action, selection, and confirmed state.",
+      "Do preserve local table scrolling and stacked task flow on narrow screens."
+    ],
+    "donts": [
+      "Don't present a pending transaction as complete before its confirmed receipt.",
+      "Don't invent peers, prices, balances, activity, savings, or status to fill a surface.",
+      "Don't replace the operating interface with a decorative hero or a generic chat landing page.",
+      "Don't introduce nested cards or shadows where structural separators already express the task hierarchy."
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+[package]
+name = "llm-providers-zkdcap-prover"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+
+[dependencies]
+anyhow = "1"
+hex = "0.4"
+serde_json = "1"
+risc0-zkvm = { version = "=3.0.5", default-features = false, features = ["prove"] }
+risc0-binfmt = { version = "=3.0.5", default-features = false }
+zkdcap-risc0 = { git = "https://github.com/datachainlab/zkdcap", rev = "fe39b99e976a9dc0e8d7232f0056b31eb81db7b1" }

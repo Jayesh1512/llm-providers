@@ -1,0 +1,10 @@
+{
+  "base": "https://llm-providers-letta.vercel.app",
+  "checks": [
+    "1440px / HTTP200, hosted account gating, no overflow",
+    "1440px /demo HTTP200, hosted account gating, no overflow",
+    "390px / HTTP200, hosted account gating, no overflow",
+    "390px /demo HTTP200, hosted account gating, no overflow"
+  ],
+  "pageErrors": []
+}

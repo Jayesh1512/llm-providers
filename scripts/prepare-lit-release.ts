@@ -1,0 +1,41 @@
+import 'dotenv/config';
+import { ECDH } from 'node:crypto';
+import { readFile, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { publicKeyToAddress } from 'viem/accounts';
+import { zeroHash, type Address, type Hex } from 'viem';
+import { z } from 'zod';
+import { importBytes } from 'ipfs-unixfs-importer';
+import { fixedSize } from 'ipfs-unixfs-importer/chunker';
+import { balanced } from 'ipfs-unixfs-importer/layout';
+import { offerId } from '../src/shared/protocol.js';
+import { VerifiedLitChannel, runtimePolicySchema } from '../src/privacy/lit-channel.js';
+import { manifestSchema, credentialContext } from '../src/privacy/lit-action.js';
+import { verifyLitKeyBinding } from '../src/privacy/client.js';
+import { commitment, configHash, parsePrivacyConfig, randomHash, seal, type PrivacyContext } from '../src/privacy/protocol.js';
+
+// Explicit preparation command only. May execute billed Lit actions when the user supplies billing access.
+// Does not create an account, buy credits, approve a release, submit a proof, publish a policy, or fund inference.
+const [releaseFile,runtimeFile,credentialsFile,outputFile]=process.argv.slice(2);
+if(!releaseFile||!runtimeFile||!credentialsFile||!outputFile)throw new Error('Pass release.json, independently approved runtime.json, private credentials array JSON, candidate output path.');
+const release=JSON.parse(await readFile(releaseFile,'utf8'));
+const manifest=manifestSchema.parse(release.manifest);
+const runtime=runtimePolicySchema.parse(JSON.parse(await readFile(runtimeFile,'utf8')));
+if(manifest.runtimePolicyId!==runtime.id)throw new Error('Runtime policy mismatch.');
+const actionFile=resolve(releaseFile,'../action.js');const code=await readFile(actionFile,'utf8');
+const {cid}=await importBytes(new TextEncoder().encode(code),{put:async cid=>cid},{cidVersion:0,rawLeaves:false,leafType:'file',chunker:fixedSize({chunkSize:262144}),layout:balanced({maxChildrenPerNode:174})});
+if(cid.toString()!==release.actionId)throw new Error('Action source/CID mismatch.');
+const secrets=z.array(z.object({provider:z.string(),model:z.string(),key:z.string().min(1).max(4096),salt:z.string().regex(/^0x[0-9a-f]{64}$/)}).strict()).parse(JSON.parse(await readFile(credentialsFile,'utf8')));
+if(secrets.length!==manifest.models.length||manifest.models.some(m=>!secrets.some(s=>s.model===m.model&&s.provider.toLowerCase()===manifest.provider.toLowerCase()&&commitment('credential',s.key,s.salt as Hex,offerId(manifest.provider as Address,m.model))===m.credentialCommitment)))throw new Error('Credential commitments differ from immutable manifest.');
+const channel=await VerifiedLitChannel.open(runtime,process.env.LIT_USAGE_API_KEY??'');
+const publicInfo=await channel.execute('async function main({actionId}){return {ok:true,result:await Lit.Actions.getLitActionPublicKey({ipfsId:actionId})}}',{actionId:release.actionId});
+if(typeof publicInfo!=='string'||!/^0x[0-9a-f]+$/.test(publicInfo))throw new Error('Invalid Lit action public key.');
+const actionPublicKey='0x'+ECDH.convertKey(Buffer.from(publicInfo.slice(2),'hex'),'secp256k1',undefined,undefined,'uncompressed').toString('hex');
+const policy=parsePrivacyConfig({version:1,backend:'lit-chipotle',actionId:release.actionId,actionPublicKey,runtimePolicyId:runtime.id,models:manifest.models});
+const context:PrivacyContext={version:1,chainId:10143,registry:manifest.registry as Address,escrow:manifest.escrow as Address,provider:manifest.provider as Address,operator:publicKeyToAddress(actionPublicKey as Hex),consumer:manifest.provider as Address,offerId:offerId(manifest.provider as Address,manifest.models[0].model),configHash:configHash(policy),requestId:'0',promptHash:zeroHash,maxOutputTokens:1,challenge:randomHash(),responseKeyHash:zeroHash,issuedAt:Date.now()};
+const binding=await channel.execute(code,{operation:'bootstrap',policy,context});
+const key=await verifyLitKeyBinding(binding,context,policy);
+const encryptedCredentials:Record<string,unknown>={};
+for(const secret of secrets)encryptedCredentials[secret.model]=await seal(key,credentialContext(policy,manifest,secret.model),'credential',{key:secret.key,salt:secret.salt});
+await writeFile(outputFile,JSON.stringify({policy,runtime,actionFile,encryptedCredentials},null,2)+'\n',{mode:0o600,flag:'wx'});
+console.log(JSON.stringify({candidateConfigHash:configHash(policy),operator:context.operator,actionId:policy.actionId,approved:false,onchainAttestation:false}));

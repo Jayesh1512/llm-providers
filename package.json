@@ -1,0 +1,50 @@
+{
+  "name": "llm-providers",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx scripts/dev.ts",
+    "provider": "tsx src/provider/main.ts",
+    "accounts": "tsx src/accounts/main.ts",
+    "build": "npm run contracts:export && tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "contracts:build": "forge build",
+    "contracts:export": "forge build && tsx scripts/export-contracts.ts",
+    "test:contracts": "forge test -vv",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "tsx scripts/e2e.ts",
+    "deploy:monad": "tsx scripts/deploy-monad.ts",
+    "preview": "vite preview --host 127.0.0.1",
+    "verify:monad": "tsx scripts/verify-deployment.ts",
+    "privacy:build": "tsx scripts/build-lit-action.ts",
+    "privacy:client": "tsx src/privacy/consumer-main.ts",
+    "privacy:check-monad": "tsx scripts/check-privacy-monad.ts",
+    "privacy:credential": "tsx scripts/prepare-private-credential.ts",
+    "privacy:prepare": "tsx scripts/prepare-lit-release.ts",
+    "privacy:attestation-call": "tsx scripts/prepare-attestation-call.ts"
+  },
+  "dependencies": {
+    "@hpke/core": "1.9.0",
+    "@lit-protocol/keychain": "2.2.3",
+    "dotenv": "^17.2.3",
+    "eventsource-parser": "4.1.1",
+    "ipfs-unixfs-importer": "17.1.1",
+    "jose": "6.2.12",
+    "lucide-react": "^0.468.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "viem": "^2.38.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "esbuild": "0.28.2",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vite": "^8.3.4"
+  }
+}

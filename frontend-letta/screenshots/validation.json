@@ -1,0 +1,21 @@
+{
+  "kind": "isolated-browser-fixtures",
+  "base": "http://127.0.0.1:5174",
+  "checks": [
+    "Primary keyboard tabs and truthful unchecked 15-model catalog",
+    "Claude OAuth disabled, API-key alternative works, secrets clear on cancel and nested tab change",
+    "390px provider and consumer screens fit viewport",
+    "Fixture exact peer dropdown, separate rates, model-change and supplier-removal clear choice; no fallback; private blocked",
+    "One protected key save exposes all three authenticated fixture text models; exact per-model config/prices require explicit preparation; failed ref-only discovery clears prepared selection",
+    "Actual imported client handles fixture signed initialization, masked unverified save/list/remove; no browser secret/session storage",
+    "Wallet change locks accounts and clears typed secret",
+    "Zero paid inference, zero chain writes, zero page errors",
+    "Demo keyboard submit, loading and Stop waiting ignore late output without claiming upstream cancellation",
+    "Personal demo: manual fixture consent only, explicit session and exact model, no fake pre-signin, transient single-turn chat/completed usage, endpoint blocked, disconnect clears chat",
+    "Delayed personal inference after wallet change cannot restore prior owner model, prompt or answer",
+    "Rejected OAuth shows only bounded stage/reason; no callback code, URL or token display"
+  ],
+  "paidCalls": 0,
+  "chainWrites": 0,
+  "pageErrors": []
+}

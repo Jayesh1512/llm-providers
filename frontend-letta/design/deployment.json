@@ -1,0 +1,24 @@
+{
+  "project": "llm-providers-letta",
+  "scope": "boxedproduct21-2417s-projects",
+  "alias": "https://llm-providers-letta.vercel.app",
+  "deployment": "https://llm-providers-letta-euhw3ht1t-boxedproduct21-2417s-projects.vercel.app",
+  "deploymentId": "dpl_9tVzffNwYU8JYBCCejaTnKYwd6mt",
+  "readyState": "READY",
+  "staticOnly": true,
+  "localPreview": "http://127.0.0.1:5174/",
+  "localDemo": "http://127.0.0.1:5174/demo",
+  "hostedAccountManagement": "gated-to-local-workspace",
+  "liveOAuth": "unconfirmed",
+  "localToolEndpoint": "not-implemented-paused",
+  "verifiedRoutes": [
+    "/",
+    "/demo"
+  ],
+  "verifiedWidths": [
+    1440,
+    390
+  ],
+  "pageErrors": [],
+  "verification": "screenshots/hosted-validation.json"
+}

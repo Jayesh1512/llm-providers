@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 2,
+  "components": 10,
+  "desktop": [
+    {
+      "name": "Primary button",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Outlined button",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Text action",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Model field",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Primary tabs",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Connection tabs",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Paid API connector",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Status badge",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Request panel",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Personal demo pane",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    }
+  ],
+  "mobile": [
+    {
+      "name": "Primary button",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Outlined button",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Text action",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Model field",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Primary tabs",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Connection tabs",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Paid API connector",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Status badge",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Request panel",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    },
+    {
+      "name": "Personal demo pane",
+      "fontLoaded": true,
+      "overflow": false,
+      "clipped": false
+    }
+  ],
+  "focus": "rgb(183, 195, 255) solid 2px",
+  "hover": "rgb(199, 208, 255)",
+  "reducedMotion": "0s",
+  "pass": true
+}
