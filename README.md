@@ -1,93 +1,266 @@
+<div align="center">
+
 # LLM Providers
 
-A paid-API peer marketplace with two registered roles: token providers and token consumers. Peer identities, endpoints, and model offers live on-chain. Consumers select a model, compare matching peers and input/output prices, and send prompts directly to the selected supplier. Standard mode keeps API keys on the supplier node. The Lit privacy integration seals credentials for an immutable protected action; live private mode is currently blocked by missing hardware/action/key evidence.
+**A peer-to-peer marketplace for paid LLM APIs, settled on Monad.**
 
-**Public contracts target Monad testnet only (chain ID 10143).** Deployment tools reject mainnet. Local tests run on a separate chain 31337 with fixture APIs. A passing local test is not a Monad deployment.
+Providers list the models they can serve and set their own prices. Consumers pick a provider, prepay on-chain, and call it from any OpenAI-compatible client. No middleman holds the keys or the money.
 
-## Run the interface
+![Monad testnet](https://img.shields.io/badge/Monad-testnet%2010143-6e54ff)
+![Built at](https://img.shields.io/badge/Built%20at-Monad%20Blitz%20Pune%20V3-1f5c3a)
+![Node](https://img.shields.io/badge/node-%E2%89%A522.12-339933)
+![Solidity](https://img.shields.io/badge/solidity-foundry-363636)
 
-Requires Node.js 22.12+ and Foundry (`forge`, plus `anvil` for integration tests).
+</div>
+
+---
+
+## Built for Monad Blitz Pune V3
+
+This project was built for the **Monad Blitz Pune V3** hackathon. It is a testnet prototype. All value is test MON on Monad testnet (chain ID `10143`), and nothing here touches mainnet.
+
+## The idea
+
+Paid model APIs have prepaid credit, discounts and spare capacity that go unused. People who need a model have no direct way to buy that capacity. This app connects the two sides with a thin on-chain layer:
+
+- **Providers** register a node, connect their own API keys locally, and publish `model + input price + output price` offers on-chain.
+- **Consumers** browse the offers, compare prices, and choose a provider themselves. Nothing is auto-routed.
+- **Payment** is held in an escrow contract. A request is funded up front, the provider's node meters real token usage, and the contract pays out only what was used. The rest is refunded.
+- **Prepaid API keys** make this usable from existing tools. Deposit once, get an OpenAI-compatible base URL and key, and call the provider with no wallet approval per request.
+
+## Screenshots
+
+### Providers: connect accounts and publish offers
+
+Keys stay on the provider's machine. They are saved through a local wallet-authenticated helper and are never sent to peers or the browser.
+
+![Providers tab](docs/images/providers.png)
+
+### Consumers: pick a model, pick a provider
+
+Offers are read straight from the on-chain registry. The model list shows how many providers serve each model, and rates are in test MON per 1M tokens.
+
+![Consumers tab](docs/images/consumer-request.png)
+
+### Advanced settings: contracts and registry status
+
+Verify, reuse or deploy the registry and escrow contracts from your own wallet.
+
+![Advanced settings](docs/images/advanced.png)
+
+## How it works
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Consumer (browser)
+    participant E as InferenceEscrow
+    participant R as PeerRegistry
+    participant N as Provider node
+    participant U as Upstream API (OpenAI / Claude / ...)
+
+    N->>R: register(endpoint, operator) + setOffer(model, prices)
+    C->>R: read offers and peers
+    C->>E: openPass(provider, caps) + deposit test MON
+    C->>N: POST /v1/chat/completions (Bearer pt_<id>_<secret>)
+    N->>U: forward prompt with provider's own API key
+    U-->>N: answer + token usage
+    N-->>C: answer
+    N->>E: chargePass(tokens) priced on-chain from the offer
+    C->>E: closePass() refunds the unspent deposit
+```
+
+There are two ways to pay, and both go through the same escrow:
+
+| | Funded request | Prepaid API key |
+|---|---|---|
+| Wallet approval | Every request | Once, when the key is created |
+| Client | The web app | Any OpenAI-compatible client or `curl` |
+| Metering | Signed invoice the consumer approves | Node charges tokens at the offer's rates, inside caps the consumer set |
+| Limits | Per-request budget and deadline | Deposit, per-call cap, expiry, and a 2x price ceiling |
+| Refund | Unused budget returns as credit | `closePass` refunds the rest at any time |
+
+### Components
+
+| Path | What it is |
+|---|---|
+| `contracts/` | `PeerRegistry` (identities, endpoints, offers) and `InferenceEscrow` (funded requests, prepaid passes) |
+| `src/web/` | React and Vite app with the Providers and Consumers tabs |
+| `src/provider/` | Provider node: authenticates requests, calls the upstream API, meters tokens, serves `/v1/*` and `/stats` |
+| `src/accounts/` | Local helper that stores upstream API keys on the provider's machine |
+| `src/privacy/`, `attestation/` | Lit and zkDCAP privacy work. Code and tests only, **not live** (see [limitations](#limitations)) |
+| `tests/`, `test/` | Node tests and Foundry tests |
+
+## Deployed on Monad testnet
+
+| Contract | Address |
+|---|---|
+| PeerRegistry | [`0x8BffcA43F6D36D47087d66E2CD9e4f6CC43cb623`](https://testnet.monadexplorer.com/address/0x8BffcA43F6D36D47087d66E2CD9e4f6CC43cb623) |
+| InferenceEscrow | [`0x201fD4a584D11e29ab3106cF71046F5066Af30BC`](https://testnet.monadexplorer.com/address/0x201fD4a584D11e29ab3106cF71046F5066Af30BC) |
+
+You can use these, or deploy your own in step 4 below.
+
+## Setup
+
+### Requirements
+
+- **Node.js 22.12 or newer** and npm
+- **[Foundry](https://book.getfoundry.sh/getting-started/installation)** (`forge`, and `anvil` for the integration test)
+- A browser wallet (MetaMask, Rabby, ...) on **Monad testnet**
+- Test MON from the [Monad faucet](https://faucet.monad.xyz) for every wallet you use
+- For the provider role only: an API key for at least one upstream model provider
+
+Add Monad testnet to your wallet if it isn't listed:
+
+| Field | Value |
+|---|---|
+| Network name | Monad Testnet |
+| RPC URL | `https://testnet-rpc.monad.xyz` |
+| Chain ID | `10143` |
+| Currency symbol | `MON` |
+| Explorer | `https://testnet.monadexplorer.com` |
+
+### 1. Install
 
 ```sh
+git clone https://github.com/Jayesh1512/llm-providers.git
+cd llm-providers
 npm install
 cp .env.example .env
 npm run contracts:export
+```
+
+`contracts:export` compiles the Solidity contracts and writes the ABI and bytecode the app uses.
+
+### 2. Start the app
+
+```sh
 npm run dev
 ```
 
-Open the Vite URL. Connect an injected EVM wallet, switch to Monad testnet, then open **Advanced settings** from either tab to deploy PeerRegistry and InferenceEscrow with your wallet. The signing wallet needs test MON. The interface stores confirmed public addresses and can reuse an existing deployment; it never receives your private key.
+Open http://127.0.0.1:5173. This starts the web app on port `5173` and the local account helper on `8791`.
 
-Alternatively, set `DEPLOYER_PRIVATE_KEY` locally in `.env` and run `npm run deploy:monad`. That script verifies RPC chain ID 10143 and writes confirmed public addresses to `deployments/monad-testnet.json`. Set the returned addresses in both `REGISTRY_ADDRESS` / `ESCROW_ADDRESS` and `VITE_REGISTRY_ADDRESS` / `VITE_ESCROW_ADDRESS`. Restart Vite after changing environment configuration. Do not paste private keys or API credentials in chat or commit `.env`.
+The public RPC allows **15 requests per second per IP**. The app batches its reads to stay under that. If you still see `requests limited to 15/sec`, close extra tabs, or set your own RPC URL in `.env` (`MONAD_RPC_URL` and `VITE_MONAD_RPC_URL`).
 
-No deployment addresses are prefilled or invented. Empty discovery results mean no offers have been published to the configured registry.
+### 3. Connect your wallet
 
-After browser-wallet deployment, verify the two public addresses with `npm run verify:monad -- <registry-address> <escrow-address>`. This read-only command checks Monad testnet, deployed code, registry linkage, and contract reads, then saves public deployment data to `deployments/monad-testnet.json` while preserving existing transaction metadata. It requires no private key and sends no transaction.
+Click **Connect wallet** and switch to Monad testnet. The header shows the network and chain ID.
 
-## Two-tab interface
+### 4. Contracts: reuse or deploy
 
-**Providers** starts with provider tiles grouped under **API keys** and **OAuth** connection tabs. API-key tiles offer Add Claude API key, Add OpenAI API key, and a secondary compatible paid API option. OAuth tiles offer Connect OpenAI / ChatGPT and explain why Connect Claude is unavailable, with a direct Claude API-key alternative. Keys are saved through the local wallet-authenticated helper and displayed as **saved locally, unverified**; saving never calls paid inference. For OpenAI, paste one key and load its official model metadata; choose any returned text model supported by the adapter, then prepare an offer with separate input/output test MON prices and explicitly publish it. All chosen model configurations reuse the same protected key. Catalog visibility is not inference validation or a promise of access to every OpenAI model. Failed discovery keeps the saved key and offers a ref-only retry. Claude and compatible APIs retain exact manual configuration. Start the node with each selected secret-free model configuration before accepting requests. Existing environment-configured nodes can still publish through an advanced disclosure.
+Use the addresses above, or deploy your own.
 
-OpenAI OAuth uses official consent for personal local use only. It does not authorize selling subscription quota. Claude OAuth has no authorized connector; use a Claude API key. Live private inference remains blocked by missing hardware/action/key evidence.
-
-**Consumers** starts with **Model** and **Provider** dropdowns. The model list combines popular Claude, OpenAI, Gemini, DeepSeek and Qwen models with every exact model ID listed by active suppliers; unavailable choices show no providers, and setup errors show availability unchecked. Choosing a model lists every matching supplier and separate test MON input/output rates. Provider selection is always manual; an optional comparison disclosure shows all matching rates. Available models appear first; output limits and the blocked privacy option live under Advanced request options. The flow continues with prompt and capped budget → wallet funding → signed send → explicit usage approval and settlement. No supplier is selected automatically. Funding recovery, expired refunds, direct receipt settlement, and withdrawal remain available beside the request. **Advanced settings** contains contract verification/deployment and peer discovery details; wallet and Monad testnet context stay in the header.
-
-Popular catalog IDs were checked on 2026-10-10 against the [Claude model catalog](https://platform.claude.com/docs/en/models/overview), [OpenAI model catalog](https://developers.openai.com/api/docs/models), [Gemini model catalog](https://ai.google.dev/gemini-api/docs/models), [DeepSeek API docs](https://api-docs.deepseek.com/), and [Qwen model catalog](https://www.alibabacloud.com/help/en/model-studio/models). These are discovery shortcuts using the default marketplace namespace; only exact published offers establish marketplace availability. Custom namespaces and model snapshots remain separate choices.
-
-The **Serving requests** action opens a separate [provider request inspector](docs/REQUEST_INSPECTOR.md), outside the two main tabs. It shows real public chain metadata when configured; live node telemetry is not connected. Standard suppliers can read prompts and responses, and the live private demo remains blocked.
-
-## Operate a standard provider
-
-1. Connect your provider-owner wallet and register its provider role, public HTTPS endpoint, and node operator address. The operator is a separate EVM signing key held by your node; its address must match the on-chain record.
-2. Set the node's `PROVIDER_ADDRESS`, `NODE_PRIVATE_KEY`, registry/escrow addresses, and paid API credentials locally in `.env`. Fund the operator with test MON so it can relay approved settlements.
-3. Configure the exact models that the node can serve. Publish matching namespaced model IDs, API formats, and rates in the app. Rates are test MON per million input/output tokens.
-4. Run `npm run provider`. For a public endpoint, put HTTPS in front of the node and configure `ALLOWED_ORIGINS` to the frontend's exact origin. Loopback HTTP is supported for development. Bind a public-facing node explicitly with `BIND_HOST=0.0.0.0` when your reverse proxy/container requires it.
-
-Example model configuration (replace model IDs with models available to your paid API account):
+**Use the existing deployment.** Put these in `.env`, then restart `npm run dev`. Vite only reads `.env` at startup.
 
 ```dotenv
-PROVIDER_MODELS_JSON='[{"model":"anthropic/my-claude-model","apiKind":1,"upstreamModel":"EXACT_CLAUDE_MODEL_ID","baseUrl":"https://api.anthropic.com","apiKeyEnv":"ANTHROPIC_API_KEY"},{"model":"openai/my-codex-model","apiKind":2,"upstreamModel":"EXACT_OPENAI_MODEL_ID","baseUrl":"https://api.openai.com","apiKeyEnv":"OPENAI_API_KEY"}]'
+REGISTRY_ADDRESS=0x8BffcA43F6D36D47087d66E2CD9e4f6CC43cb623
+ESCROW_ADDRESS=0x201fD4a584D11e29ab3106cF71046F5066Af30BC
+VITE_REGISTRY_ADDRESS=0x8BffcA43F6D36D47087d66E2CD9e4f6CC43cb623
+VITE_ESCROW_ADDRESS=0x201fD4a584D11e29ab3106cF71046F5066Af30BC
+VITE_MONAD_RPC_URL=https://testnet-rpc.monad.xyz
 ```
 
-Adapters support Anthropic Messages (1), OpenAI Responses (2), and configured OpenAI-compatible Chat Completions (3). `baseUrl` is the upstream origin or gateway prefix; adapters append the API endpoint path. OpenCode is a client/gateway ecosystem, not a model; compatible paid services can be configured through the relevant API format. Local models are future scope. Supplier subscription OAuth is unavailable; the separate personal/local ChatGPT connector cannot serve marketplace requests.
+**Deploy your own, from the app.** Leave the address variables empty, open **Advanced settings**, and click **Deploy a new network**. Confirm two wallet transactions (registry, then escrow). Copy the two addresses into `.env` as above so other browsers and wallets see them. If you set both addresses in `.env`, the deploy button is disabled on purpose.
 
-The node verifies registration, its authorized operator key, funded request ownership, prompt hash, consumer signature, output cap, and deadline before paid inference. Usage comes from upstream API usage fields, not character estimates. A durable request journal prevents concurrent requests or process restarts from silently repeating a paid call. Do not delete completed/pending journal entries; interrupted entries are intentionally nonretryable. After an unclean shutdown, remove only the namespace `.lock` after confirming no other node process uses it, preserving the journal.
+**Deploy your own, from the CLI.** Set `DEPLOYER_PRIVATE_KEY` in `.env` (locally, never in chat or git), then run `npm run deploy:monad`. Afterwards run `npm run verify:monad -- <registry> <escrow>` to check the deployment read-only.
 
-`npm run dev` starts the interface and its loopback account helper together. On a fresh directory, the first account action asks your wallet to sign an explicit initialization message and pins that owner; no `.env` or manually entered wallet address is needed. An existing owner remains pinned. You can preconfigure a public `ACCOUNT_OPERATOR_ADDRESS` (or `PROVIDER_ADDRESS`) and run `npm run accounts` separately for a static/local preview. Select a saved key's returned `providerModelConfig` explicitly in `PROVIDER_MODELS_JSON`; the helper wallet must match `PROVIDER_ADDRESS`, and helper/node must share `ACCOUNT_STATE_DIR`. No save performs billed validation. OAuth tokens stay in a separate protected local file and never reach peers, offers or browser storage. Claude OAuth and Lit private OAuth remain unavailable. See [account setup, security, supported status and prerequisites](docs/ACCOUNT_CONNECTORS.md). No live OAuth login/inference was tested.
+Once set, the header's Advanced settings shows **Contracts verified**.
 
-## Consumer flow
+### 5. Run as a provider
 
-In standard mode, register as a consumer, select an exact model, compare matching peers, and select one supplier. The app authenticates the node using a fresh signed challenge, funds a capped request, then sends an authorized prompt directly to that node. It verifies the returned signed invoice and response hash before showing an explicit usage-payment approval. Settlement credits the provider's wallet and returns unused budget as consumer credit. Credits can be withdrawn; an unsettled request can be fully refunded once its deadline expires.
+1. **Create a node key.** This is a separate signing key held only by your node. It is not your wallet.
+   ```sh
+   cast wallet new
+   ```
+   Note its address. This is your **node operator address**.
+2. **Fill in `.env`** (your wallet is the listing owner, the node key is the operator):
+   ```dotenv
+   PROVIDER_ADDRESS=0xYourWalletAddress
+   NODE_PRIVATE_KEY=0xYourNodeKey
+   OPENAI_API_KEY=sk-...
+   PROVIDER_MODELS_JSON='[{"model":"openai/my-model","apiKind":2,"upstreamModel":"EXACT_UPSTREAM_MODEL_ID","baseUrl":"https://api.openai.com","apiKeyEnv":"OPENAI_API_KEY"}]'
+   ```
+   `apiKind` is `1` for Anthropic Messages, `2` for OpenAI Responses and `3` for OpenAI-compatible Chat Completions. `model` is the marketplace ID consumers see. `upstreamModel` is the exact ID your upstream account serves.
+3. **Fund the node key** with a little test MON. It pays gas to relay charges.
+4. **Set the operator address in the app.** The app pins the node operator address as a hackathon simplification. Open `src/web/App.tsx` (line ~87) and replace the default in `useState('0x…')` with the address from step 1. Vite hot-reloads it. The registered operator must equal the address of `NODE_PRIVATE_KEY`, or consumers can't authenticate your node.
+5. **Start the node:**
+   ```sh
+   npm run provider
+   ```
+   It listens on `127.0.0.1:8787` by default. Check `http://127.0.0.1:8787/health`.
+6. **Register.** In the app, go to **Providers**, open **Provider node & wallet registration**, enter your node endpoint (`http://127.0.0.1:8787` for local use), and click **Register peer**. The checklist at the top of that section tracks your progress.
+7. **Publish an offer.** Set an input and output price in test MON per 1M tokens and click **Publish offer**.
 
-Prompts and response text are kept off-chain. The chain and signed receipts use hashes. Standard mode explicitly labels that the supplier can read prompts and answers. Private mode never falls back to standard mode. Native test MON is prototype accounting; the app does not imply a USD price or guaranteed savings.
+The **Providers** tab then shows a stats row: requests served, API key calls, and earnings. It reads your node's `/stats` endpoint and refreshes every 15 seconds.
 
-## Lit protected inference and on-chain attestation
+> For a public endpoint, put HTTPS in front of the node and set `ALLOWED_ORIGINS` to your frontend's exact origin. To bind outside loopback, set `BIND_HOST=0.0.0.0`.
 
-The privacy feature includes an immutable Lit Chipotle Action, HPKE encrypted requests/answers, secret-salted commitments, wallet/session/key bindings, a consumer TLS/TDX/collateral verifier, and an Intel-rooted zkDCAP verifier with registry/funding/acceptance enforcement. **It is code/test ready for review, not usable live end-to-end.** Current Lit quotes authenticate runtime/TLS evidence, but do not provide the action-CID/encryption-key hardware statement our on-chain verifier requires. No approved release exists; private registration/funding/acceptance fail closed.
+### 6. Use it as a consumer
 
-All our public contracts remain Monad testnet 10143. Lit's third-party KMS/governance depends on Base; smart contracts do not privately encrypt/decrypt prompts. AWS Nitro is not a backend. See [privacy implementation and prerequisites](docs/PRIVACY.md), [on-chain verification and measured Monad feasibility](docs/ONCHAIN_ATTESTATION.md), and [dependency source/licenses](docs/THIRD_PARTY.md). The linked RISC Zero verifier introduces GPL-3.0 obligations for the combined contract deployment.
+**Use the app**
+
+1. Open **Consumers** and connect a wallet. Use a different wallet from the provider to test the full flow.
+2. Pick a model, then a provider. Rates are shown per 1M tokens.
+3. Register the wallet as a consumer when prompted (one transaction).
+4. Write a prompt, set a capped budget, and fund the request. Keep the page open until the response comes back. The prompt is not stored, so a refresh means you must retype the exact prompt to continue or recover the deposit after expiry.
+5. Approve usage to settle. Unused budget returns as credit you can withdraw.
+
+**Use a prepaid API key (works with any OpenAI-compatible client)**
+
+1. Select a provider as above.
+2. In **Prepaid API key**, set a deposit, a max per call, and a number of days, then click **Create API key** and confirm the transaction.
+3. The key card shows the base URL, the key, and a ready-to-run `curl` command with your key filled in. Use **Copy curl command**.
 
 ```sh
-npm run privacy:build -- docs/examples/lit-action-manifest.local-example.json
-npm run privacy:check-monad
+curl http://127.0.0.1:8787/v1/chat/completions \
+  -H "Authorization: Bearer pt_1_<your key>" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"openai/my-model","messages":[{"role":"user","content":"Hello"}]}'
 ```
 
-The example contains dummy public values and is not approved. The first command builds locally; the second uses read-only RPC/state overrides and sends no transaction. Existing browser/CLI contract deployment still creates registry and escrow with privacy disabled. Independent governance can later configure the fixed verifier once through reviewed wallet calldata; no measurements or proof verdicts are prefilled. Live Lit preparation requires an execute-only billing key and existing prepaid access, a pinned full verifier, reviewed runtime/action/account policy, test MON for the action operator, and the missing authenticated binding evidence. No paid account, credits or infrastructure were provisioned.
+For SDKs, set the base URL to `http://127.0.0.1:8787/v1`, the API key to your full `pt_…` key, and the model to the marketplace ID. **Close key & refund unspent** revokes the key and returns the remaining deposit. Anyone holding the key can spend the remaining deposit, so treat it like cash.
 
-## Validation
+A local endpoint is only reachable from your own machine. To call a provider from elsewhere, it needs an HTTPS tunnel or a public endpoint.
+
+## Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| No providers listed | The app has no contract addresses. Set the `VITE_*` variables, restart `npm run dev`, and hard-refresh. The saved address in a browser's `localStorage` is a fallback only. |
+| `requests limited to 15/sec` | Public RPC limit. Close extra tabs, wait a few seconds, or use a private RPC URL. |
+| **Create API key** fails, empty revert | The deployed escrow predates prepaid keys. Deploy a fresh escrow from the current contracts. |
+| "Connect the wallet that owns this local account helper" | The account helper is pinned to another wallet. Connect that wallet, or stop the app and delete `.account-state/` to re-pin (this deletes saved keys). |
+| "Enter the original funded prompt" | The prompt box doesn't match the funded request's hash. Retype it exactly, or recover the deposit after the deadline. |
+| `Supplier startup failed` | The previous node still holds the state lock, or config is wrong. Stop the other process and retry. After an unclean exit, remove only `.lock` in `.provider-state/`. |
+| Deploy button is disabled | Both addresses are already set. Clear the unwanted one in `.env`, or run `localStorage.removeItem('llm-providers:contracts:10143')` in the browser console. |
+| Node can't be authenticated | Registered operator doesn't equal the address of `NODE_PRIVATE_KEY`. Re-register with the correct operator. |
+
+## Test
 
 ```sh
-npm run test:contracts
-npm test
-npm run test:e2e
+npm run test:contracts   # Foundry tests
+npm test                 # unit tests
+npm run test:e2e         # local Anvil chain, both contracts, all three API formats via fixtures
 npm run build
 ```
 
-The integration test starts an ephemeral local Anvil chain, deploys both contracts, registers distinct provider/consumer/operator accounts, exercises all three API formats through local HTTP fixtures, authenticates the node, verifies signed usage invoices, settles payments, checks duplicate-call protection, withdraws credits, and refunds an expired request. It also exercises the encrypted private gateway/claim/settlement path with an explicitly local-only mock verifier and throwaway action key; that is not hardware evidence. It uses no live API credentials and performs no public deployment.
+The end-to-end test uses no live API credentials and deploys nothing public.
 
-## Payment and economic limits
+## Limitations
 
-This is a testnet prototype. The escrow verifies a consumer-approved charge; it does not prove model identity or honest upstream metering. A consumer can receive a response and withhold payment approval, leaving the supplier with the upstream cost. A production fair-exchange mechanism is separate work.
+This is a prototype built in a hackathon. Read these before relying on it.
 
-Lower consumer prices depend on the supplier having favorable API costs, discounts, or otherwise-unused prepaid credit. Ordinary pay-per-use access does not automatically create profitable spare inventory. Providers set their offers; the marketplace does not promise savings or profits.
+- **Testnet only.** Deployment tools reject mainnet. Test MON has no value.
+- **Trust in the provider.** The chain doesn't prove which model answered or that token counts are honest. Providers can read prompts and responses.
+- **Fair exchange is unsolved.** In the funded-request flow, a consumer can withhold payment approval after receiving an answer. Prepaid keys avoid this but make the consumer trust the provider's metering, bounded by the deposit, per-call cap and price ceiling.
+- **Private mode is not live.** The Lit and on-chain attestation code is written and tested, but the hardware evidence it needs doesn't exist yet, so private registration and funding fail closed.
+- **Stats start at restart.** API-key call counts begin from the node's first run with this feature. Earlier calls aren't counted.
+- **Prices aren't promises.** Cheaper rates depend on a provider's own costs. The app promises no savings.
 
-See [protocol](PROTOCOL.md) and [architecture](docs/ARCHITECTURE.md) for schemas, trust boundaries, and future local-model integration. Network values: [official Monad testnet documentation](https://docs.monad.xyz/developer-essentials/testnet). Adapter references: [OpenAI text generation](https://developers.openai.com/api/docs/guides/text) and [Claude Messages](https://platform.claude.com/docs/en/build-with-claude/working-with-messages).
+## More documentation
+
+- [Full reference (operations, accounts, interface details)](docs/DETAILS.md)
+- [Protocol](PROTOCOL.md) and [architecture](docs/ARCHITECTURE.md)
+- [Account connectors and key storage](docs/ACCOUNT_CONNECTORS.md)
+- [Privacy design](docs/PRIVACY.md) and [on-chain attestation](docs/ONCHAIN_ATTESTATION.md)
+- [Third-party dependencies and licenses](docs/THIRD_PARTY.md). The linked RISC Zero verifier adds GPL-3.0 obligations for that combined deployment.
